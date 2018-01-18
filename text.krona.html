@@ -3594,7 +3594,8 @@ value="&harr;" title="Expand this wedge to become the new focus of the chart"/><
 &nbsp;Search: <input type="text" id="search"/>\
 <input id="searchClear" type="button" value="x" onclick="clearSearch()"/> \
 <span id="searchResults"></span>Cutoff: <input type="text" id="cutoff"/>\
-<input id="cutoffButton" type="button" value="Apply" onclick="applyCutoff()"/>\
+<input id="cutoffButton" type="button" value="x" onclick="applyCutoff()"/>\
+<input id="cutoffResetButton" type="button" value="Reset" onclick="resetDepths()"/>\
 <span id="searchResults"></span>'
 	);
 
@@ -3912,10 +3913,14 @@ function clearSearch()
 function applyCutoff()
 {
 	resetDepths();
-	
+
 	const cutoff_value = parseFloat(cutoff.value);
+
 	if ( isNaN(cutoff_value) ) {
 		cutoff.value = "Invalid value! Must be numerical";
+		return;
+	} else if( cutoff_value < 0 ){
+		cutoff.value = "Value may not be negative!";
 		return;
 	}
 
@@ -5799,6 +5804,7 @@ function setCallBacks()
 	helpButton.onmousedown = suppressEvent;
 	var searchClear = document.getElementById('searchClear');
 	var cutoffButton = document.getElementById('cutoffButton');
+	var cutoffResetButton = document.getElementById('cutoffResetButton');
 	searchClear.onmousedown = suppressEvent;
 	if ( datasets > 1 )
 	{
@@ -6696,34 +6702,34 @@ function zoomOut()
     <dataset>text</dataset>
    </datasets>
 <node name="all">
- <magnitudeUnassigned><val>4</val></magnitudeUnassigned>
  <magnitude><val>55</val></magnitude>
+ <magnitudeUnassigned><val>4</val></magnitudeUnassigned>
  <node name="Protein">
   <magnitude><val>5</val></magnitude>
  </node>
- <node name="Fats">
-  <magnitude><val>8</val></magnitude>
-  <node name="Unsaturated fat">
-   <magnitude><val>6</val></magnitude>
-   <node name="Polyunsaturated fat">
-    <magnitude><val>3</val></magnitude>
-   </node>
-   <node name="Monounsaturated fat">
-    <magnitude><val>3</val></magnitude>
-   </node>
-  </node>
-  <node name="Saturated fat">
-   <magnitude><val>2</val></magnitude>
-  </node>
- </node>
  <node name="Carbohydrates">
-  <magnitude><val>38</val></magnitude>
   <magnitudeUnassigned><val>21</val></magnitudeUnassigned>
+  <magnitude><val>38</val></magnitude>
+  <node name="Dietary fiber">
+   <magnitude><val>4</val></magnitude>
+  </node>
   <node name="Sugars">
    <magnitude><val>13</val></magnitude>
   </node>
-  <node name="Dietary fiber">
-   <magnitude><val>4</val></magnitude>
+ </node>
+ <node name="Fats">
+  <magnitude><val>8</val></magnitude>
+  <node name="Saturated fat">
+   <magnitude><val>2</val></magnitude>
+  </node>
+  <node name="Unsaturated fat">
+   <magnitude><val>6</val></magnitude>
+   <node name="Monounsaturated fat">
+    <magnitude><val>3</val></magnitude>
+   </node>
+   <node name="Polyunsaturated fat">
+    <magnitude><val>3</val></magnitude>
+   </node>
   </node>
  </node>
 </node>

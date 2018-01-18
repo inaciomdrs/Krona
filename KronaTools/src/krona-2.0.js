@@ -3587,7 +3587,8 @@ value="&harr;" title="Expand this wedge to become the new focus of the chart"/><
 &nbsp;Search: <input type="text" id="search"/>\
 <input id="searchClear" type="button" value="x" onclick="clearSearch()"/> \
 <span id="searchResults"></span>Cutoff: <input type="text" id="cutoff"/>\
-<input id="cutoffButton" type="button" value="Apply" onclick="applyCutoff()"/>\
+<input id="cutoffButton" type="button" value="x" onclick="applyCutoff()"/>\
+<input id="cutoffResetButton" type="button" value="Reset" onclick="resetDepths()"/>\
 <span id="searchResults"></span>'
 	);
 
@@ -3905,10 +3906,14 @@ function clearSearch()
 function applyCutoff()
 {
 	resetDepths();
-	
+
 	const cutoff_value = parseFloat(cutoff.value);
+
 	if ( isNaN(cutoff_value) ) {
 		cutoff.value = "Invalid value! Must be numerical";
+		return;
+	} else if( cutoff_value < 0 ){
+		cutoff.value = "Value may not be negative!";
 		return;
 	}
 
@@ -5792,6 +5797,7 @@ function setCallBacks()
 	helpButton.onmousedown = suppressEvent;
 	var searchClear = document.getElementById('searchClear');
 	var cutoffButton = document.getElementById('cutoffButton');
+	var cutoffResetButton = document.getElementById('cutoffResetButton');
 	searchClear.onmousedown = suppressEvent;
 	if ( datasets > 1 )
 	{
