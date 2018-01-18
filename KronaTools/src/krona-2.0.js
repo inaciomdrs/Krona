@@ -95,6 +95,7 @@ var radiusButtonDecrease;
 var radiusButtonIncrease;
 var shorten;
 var shortenCheckBox;
+var originalDepths;
 var maxAbsoluteDepth;
 var minAbsoluteCutoff;
 var backButton;
@@ -3903,13 +3904,23 @@ function clearSearch()
 
 function applyCutoff()
 {
+	resetDepths();
+	
 	const cutoff_value = parseFloat(cutoff.value);
 	if ( isNaN(cutoff_value) ) {
 		cutoff.value = "Invalid value! Must be numerical";
 		return;
 	}
 
-	handleResize();
+	minAbsoluteCutoff = cutoff_value;
+
+	for(i = 0; i < nodes.length; i++){
+		if(nodes[i].magnitude < minAbsoluteCutoff){
+			nodes[i].depth = maxAbsoluteDepth + 1;
+		}
+	}
+
+	updateViewNeeded = true;
 }
 
 function createSVG()
@@ -5134,6 +5145,21 @@ function load()
 	window.onresize = handleResize;
 	updateMaxAbsoluteDepth();
 	defineMinAbsoluteCutoff();
+
+	originalDepths = {};
+
+	for(i = 0; i < nodes.length; i++){
+		originalDepths[nodes[i].name] = nodes[i].depth;
+	}
+
+	updateViewNeeded = true;
+}
+
+function resetDepths(){
+	for(i = 0; i < nodes.length; i++){
+		nodes[i].depth = originalDepths[nodes[i].name];
+	}
+
 	updateViewNeeded = true;
 }
 
@@ -6619,9 +6645,9 @@ function updateMaxAbsoluteDepth()
 
 function defineMinAbsoluteCutoff(){
 	minAbsoluteCutoff = nodes[0].magnitude;
-	for(i=1;i<nodes.length;i++){
+	for(i = 1; i < nodes.length; i++){
 		if(nodes[i].magnitude < minAbsoluteCutoff){
-			minAbsoluteCutoff = nodes[i].magnitude; 
+			minAbsoluteCutoff = nodes[i].magnitude;
 		}
 	}
 }
