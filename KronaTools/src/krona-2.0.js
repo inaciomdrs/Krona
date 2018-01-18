@@ -3588,7 +3588,7 @@ value="&harr;" title="Expand this wedge to become the new focus of the chart"/><
 <input id="searchClear" type="button" value="x" onclick="clearSearch()"/> \
 <span id="searchResults"></span>Cutoff: <input type="text" id="cutoff"/>\
 <input id="cutoffButton" type="button" value="x" onclick="applyCutoff()"/>\
-<input id="cutoffResetButton" type="button" value="Reset" onclick="resetDepths()"/>\
+<input id="cutoffResetButton" type="button" value="Reset" onclick="resetCutoff()"/>\
 <span id="searchResults"></span>'
 	);
 
@@ -3903,21 +3903,33 @@ function clearSearch()
 	}
 }
 
+function isValidCutoff(cutoff_value){
+
+	if ( isNaN(cutoff_value) ) {
+		cutoff.value = "Invalid value! Must be numerical";
+		return false;
+	} else if( cutoff_value < 0 ){
+		cutoff.value = "Value may not be negative!";
+		return false;
+	}
+
+	return true;
+}
+
 function applyCutoff()
 {
 	resetDepths();
 
+	const original_cutoff_input = cutoff.value;
 	const cutoff_value = parseFloat(cutoff.value);
 
-	if ( isNaN(cutoff_value) ) {
-		cutoff.value = "Invalid value! Must be numerical";
+	if ( isValidCutoff(cutoff_value) ) {
+		minAbsoluteCutoff = cutoff_value;
+	} else if ( original_cutoff_input != "" ) {
 		return;
-	} else if( cutoff_value < 0 ){
-		cutoff.value = "Value may not be negative!";
-		return;
+	} else {
+		cutoff.value = "";
 	}
-
-	minAbsoluteCutoff = cutoff_value;
 
 	for(i = 0; i < nodes.length; i++){
 		if(nodes[i].magnitude < minAbsoluteCutoff){
@@ -5168,6 +5180,12 @@ function resetDepths(){
 	updateViewNeeded = true;
 }
 
+function resetCutoff(){
+	resetDepths();
+	defineMinAbsoluteCutoff();
+	cutoff.value = "";
+}
+
 function loadTreeDOM
 (
 	domNode,
@@ -5300,22 +5318,26 @@ function loadTreeDOM
 
 function maxAbsoluteDepthDecrease()
 {
+	resetDepths();
 	if ( maxAbsoluteDepth > 2 )
 	{
 		maxAbsoluteDepth--;
 		head.setMaxDepths();
 		handleResize();
 	}
+	applyCutoff();
 }
 
 function maxAbsoluteDepthIncrease()
 {
+	resetDepths();
 	if ( maxAbsoluteDepth < head.maxDepth )
 	{
 		maxAbsoluteDepth++;
 		head.setMaxDepths();
 		handleResize();
 	}
+	applyCutoff();
 }
 
 function measureText(text, bold)
